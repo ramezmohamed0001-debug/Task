@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خارطة طريق مهندس الأنظمة | الإصدار الفاخر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Confetti Library for Celebration Animation -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050b14;
+            --panel-bg: rgba(13, 20, 36, 0.6);
+            --accent-blue: #3b82f6;
+            --accent-gold: #d4af37;
+        }
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background-color: var(--bg-dark); 
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(29, 78, 216, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.05), transparent 25%);
+            color: #f8fafc; 
+            overflow-x: hidden;
+        }
+        
+        /* Premium Glassmorphism */
+        .glass-panel { 
+            background: var(--panel-bg); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03); 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glass-panel:hover {
+            border-color: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up { animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 15px 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .glow-btn:hover { animation: pulseGlow 1.5s infinite; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+
+        /* Gradients */
+        .text-gradient {
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .progress-bar-fill { 
+            background: linear-gradient(90deg, #2563eb, #8b5cf6);
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Accordion transition */
+        .stage-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.5s ease-in-out;
+        }
+        .stage-content.open { grid-template-rows: 1fr; }
+        .stage-content > div { overflow: hidden; }
+        
+        .arrow-icon { transition: transform 0.4s ease; }
+        .open .arrow-icon { transform: rotate(180deg); }
+
+        /* Custom Checkbox */
+        .custom-checkbox input:checked + div {
+            background-color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+        .custom-checkbox input:checked + div svg {
+            stroke-dashoffset: 0;
+        }
+        .check-svg {
+            stroke-dasharray: 24;
+            stroke-dashoffset: 24;
+            transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Modal for Study Guide */
+        #study-guide-modal {
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+        #study-guide-modal.active {
+            display: flex;
+        }
+
+        /* Tabs styling */
+        .tab-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            border-color: #3b82f6;
+            color: white;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 3px;
+            background-color: #60a5fa;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        /* Task completion celebration pop */
+        @keyframes popScale {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); background-color: rgba(16, 185, 129, 0.15); }
+            100% { transform: scale(1); }
+        }
+        .task-pop { animation: popScale 0.4s ease-in-out; }
+    </style>
+</head>
+<body class="p-4 md:p-10 font-sans relative">
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-8 text-center animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="inline-block mb-4 px-4 py-1 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-300 text-sm font-semibold tracking-wide">
+            <i class="fa-solid fa-crown mr-1 text-yellow-400"></i> الإصدار الاحترافي المتكامل
+        </div>
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
+            مركز القيادة <span class="text-gradient">Systems Engineering</span>
+        </h1>
+        
+        <!-- Tabs Navigation -->
+        <div class="flex justify-center gap-4 mt-8 mb-4">
+            <button onclick="switchTab('roadmap')" id="tab-roadmap" class="tab-btn active bg-slate-800 border border-slate-600 text-gray-300 px-6 py-3 rounded-xl text-lg font-bold transition-all hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-map-location-dot"></i> خارطة الطريق
+            </button>
+            <button onclick="switchTab('tasks')" id="tab-tasks" class="tab-btn bg-slate-800 border border-slate-600 text-gray-300 px-6 py-3 rounded-xl text-lg font-bold transition-all hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-list-check"></i> مهامي الخاصة
+            </button>
+        </div>
+    </header>
+
+    <!-- ================= VIEW: ROADMAP ================= -->
+    <div id="view-roadmap">
+        <div class="max-w-7xl mx-auto text-center mb-10">
+            <button onclick="toggleModal('study-guide-modal')" class="glow-btn bg-gradient-to-r from-emerald-600 to-teal-800 hover:from-emerald-500 hover:to-teal-700 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-emerald-900/50 inline-flex items-center gap-2">
+                <i class="fa-solid fa-brain"></i> دليلك للمذاكرة الفعّالة
+            </button>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-fade-up" style="animation-delay: 0.2s;">
+            <!-- Card 1 -->
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-16 h-16 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all"></div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400 text-sm font-semibold">الإنجاز الكلي</h3>
+                    <i class="fa-solid fa-chart-line text-blue-500 bg-blue-500/10 p-2 rounded-lg"></i>
+                </div>
+                <div class="text-5xl font-black text-white" id="total-progress">0%</div>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-all"></div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400 text-sm font-semibold">المراحل المكتملة</h3>
+                    <i class="fa-solid fa-layer-group text-emerald-500 bg-emerald-500/10 p-2 rounded-lg"></i>
+                </div>
+                <div class="text-4xl font-bold text-white"><span id="completed-stages" class="text-emerald-400">0</span> <span class="text-gray-600 text-2xl">/ 14</span></div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-16 h-16 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-all"></div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400 text-sm font-semibold">الكورسات المنجزة</h3>
+                    <i class="fa-solid fa-graduation-cap text-purple-500 bg-purple-500/10 p-2 rounded-lg"></i>
+                </div>
+                <div class="text-4xl font-bold text-white"><span id="completed-courses" class="text-purple-400">0</span> <span class="text-gray-600 text-2xl">/ <span id="total-courses">0</span></span></div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-16 h-16 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all"></div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-400 text-sm font-semibold">المشاريع المنفذة</h3>
+                    <i class="fa-solid fa-rocket text-amber-500 bg-amber-500/10 p-2 rounded-lg"></i>
+                </div>
+                <div class="text-4xl font-bold text-white"><span id="completed-projects" class="text-amber-400">0</span> <span class="text-gray-600 text-2xl">/ <span id="total-projects">0</span></span></div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="max-w-7xl mx-auto glass-panel p-5 rounded-2xl mb-12 flex flex-col lg:flex-row justify-between items-center gap-6 animate-fade-up" style="animation-delay: 0.3s;">
+            <div class="flex flex-wrap gap-3 w-full lg:w-auto justify-center">
+                <button onclick="exportJSON()" class="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-blue-900/50 flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> تصدير البيانات
+                </button>
+                <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-upload text-emerald-400"></i> استيراد
+                    <input type="file" class="hidden" accept=".json" onchange="importJSON(event)">
+                </label>
+                <button onclick="resetData()" class="bg-slate-800 hover:bg-red-900/40 border border-slate-600 hover:border-red-500/50 text-gray-300 hover:text-red-400 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> إعادة ضبط
+                </button>
+            </div>
+            <div class="relative w-full lg:w-96">
+                <i class="fa-solid fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="search-input" placeholder="ابحث في المسار..." class="w-full bg-slate-900/50 border border-slate-700 text-white pl-4 pr-11 py-3 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-500" onkeyup="filterRoadmap()">
+            </div>
+        </div>
+
+        <!-- Roadmap Container -->
+        <div id="roadmap-container" class="max-w-7xl mx-auto space-y-6 pb-20">
+            <!-- Stages JS Injection -->
+        </div>
+    </div>
+
+    <!-- ================= VIEW: TASKS ================= -->
+    <div id="view-tasks" class="hidden max-w-5xl mx-auto pb-20 animate-fade-up">
+        
+        <div class="glass-panel p-6 rounded-2xl mb-8 border border-blue-500/20">
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <i class="fa-solid fa-plus-circle text-blue-500"></i> إضافة مهمة جديدة
+            </h2>
+            <div class="flex flex-col md:flex-row gap-4">
+                <input type="text" id="new-task-title" placeholder="ما الذي تريد إنجازه اليوم؟" class="flex-1 bg-slate-900/80 border border-slate-700 text-white px-5 py-3.5 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-500 text-lg">
+                <button onclick="addNewTask()" class="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/50 flex items-center justify-center gap-2 md:w-auto w-full">
+                    <i class="fa-solid fa-check"></i> إضافة
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-panel p-6 md:p-8 rounded-2xl">
+            <div class="flex justify-between items-end mb-6 border-b border-slate-700/50 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                        <i class="fa-solid fa-list text-emerald-500"></i> قائمة المهام
+                    </h2>
+                    <p class="text-gray-400 text-sm mt-1">تتبع مهامك الشخصية ومشاريعك الجانبية.</p>
+                </div>
+                <div class="text-sm font-semibold text-gray-400 bg-slate-800 px-4 py-2 rounded-lg">
+                    المنجز: <span id="tasks-completed-count" class="text-emerald-400">0</span> / <span id="tasks-total-count">0</span>
+                </div>
+            </div>
+
+            <div id="tasks-list" class="space-y-3">
+                <!-- Tasks will be injected here -->
+                <div class="text-center py-10 text-gray-500 hidden" id="no-tasks-msg">
+                    <i class="fa-solid fa-clipboard-check text-5xl mb-3 opacity-50"></i>
+                    <p>لا توجد مهام حالياً. أضف مهمتك الأولى!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Study Guide Modal -->
+    <div id="study-guide-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+        <div class="glass-panel bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl overflow-y-auto relative border border-emerald-500/30">
+            <button onclick="toggleModal('study-guide-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-slate-800 hover:bg-red-600 w-10 h-10 rounded-full flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-times text-xl"></i>
+            </button>
+            
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <div class="inline-block bg-emerald-500/20 p-4 rounded-full text-emerald-400 mb-4 text-3xl">
+                        <i class="fa-solid fa-book-open-reader"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-white mb-2">الدليل الشامل للمذاكرة الفعّالة</h2>
+                    <p class="text-gray-400">إزاي تطلع بأقصى استفادة من كل كورس وتثبت المعلومة؟</p>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-xl font-bold text-amber-400 mb-3"><i class="fa-solid fa-1 mr-2"></i> لا تكن مستمعاً سلبياً (Active Learning)</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            أكبر غلطة في مجالات الـ IT والبرمجة إنك تتفرج على الفيديو كأنه فيلم. الكورس مش نتفليكس. 
+                            <br><span class="text-emerald-400 font-semibold">التطبيق الفوري:</span> شوف المدرب بيعمل إيه، وقّف الفيديو، واعمل زيه بالظبط على جهازك. لو ما كتبتش الكود أو الأمر بإيدك، يبقى انت ما اتعلمتش حاجة، انت بس "فهمت الفكرة" ولما تيجي تنفذ هتقف.
+                        </p>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-xl font-bold text-blue-400 mb-3"><i class="fa-solid fa-2 mr-2"></i> قاعدة الـ 20 دقيقة (Pomodoro Technique)</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            المخ بيفقد تركيزه بعد فترة قصيرة. قسّم وقت مذاكرتك كالتالي:
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-gray-400">
+                                <li>25 دقيقة تركيز تام (مفيش موبايل، مفيش سوشيال ميديا).</li>
+                                <li>5 دقائق راحة (قوم من مكانك، اشرب ميه، بص لبعيد عشان عينك).</li>
+                                <li>بعد 4 جولات، خد راحة طويلة 30 دقيقة.</li>
+                            </ul>
+                        </p>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-xl font-bold text-purple-400 mb-3"><i class="fa-solid fa-3 mr-2"></i> التوثيق والملاحظات (Cheat Sheets)</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            ماتحاولش تحفظ كل حاجة، ده مجال واسع جداً! 
+                            <br>اعمل لنفسك <span class="text-purple-300 font-semibold">ملف Notion أو كراسة مخصصة</span>. اكتب فيها:
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-gray-400">
+                                <li>الأوامر المهمة (أوامر Linux، أوامر Git، أوامر SQL).</li>
+                                <li>المصطلحات الجديدة ومعناها باختصار.</li>
+                                <li>مشكلة وقفت قدامك وإزاي حليتها (عشان لما تقابلك تاني).</li>
+                            </ul>
+                            المهندس الشاطر مش اللي حافظ، المهندس الشاطر اللي بيعرف يدوّر ويجيب المعلومة من الـ Docs بتاعته بسرعة.
+                        </p>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-xl font-bold text-red-400 mb-3"><i class="fa-solid fa-4 mr-2"></i> التعلم بالمشاريع (Project-Based Learning)</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            الكورسات بتعلمك "الأدوات"، لكن اللي بيعلمك "الشغل" هو المشاريع. 
+                            <br>عشان كده الخريطة دي مبنية على إن بعد كل مرحلة فيه مشروع. 
+                            <span class="text-red-300 font-semibold">إياك تتخطى المشروع!</span> لو خلصت كورس وما عملتش المشروع بتاعه، اعتبر إنك ما اخدتش الكورس. كسر الحاجات وتصليحها هو اللي بيعلمك الـ Troubleshooting.
+                        </p>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-xl font-bold text-emerald-500 mb-3"><i class="fa-solid fa-5 mr-2"></i> قاعدة الـ 15 دقيقة في حل المشاكل (The 15-Minute Rule)</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            لما تقابلك مشكلة أو إيرور (Error) أو الكود مش شغال:
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-gray-400">
+                                <li><span class="text-emerald-400">حاول تحلها بنفسك لمدة 15 دقيقة</span> (اقرأ الـ Error كويس، ابحث على Google أو StackOverflow).</li>
+                                <li>لو عدت الـ 15 دقيقة ولسه مش عارف، <span class="text-red-400">اسأل فوراً!</span> (اسأل AI، اسأل في جروب على الفيس بوك، اسأل المدرب).</li>
+                            </ul>
+                            ماتضيعش 3 أيام في مشكلة تافهة عشان "بتعافر بنفسك"، ده هيجيبلك إحباط. العند في التقنية مش مطلوب دايماً.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <button onclick="toggleModal('study-guide-modal')" class="bg-slate-700 hover:bg-slate-600 text-white px-8 py-2 rounded-lg font-bold transition-colors">
+                        فهمت، جاهز للبدء!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= ROADMAP DATA =================
+        const defaultRoadmap = [
+            {
+                id: "stage-1", title: "المرحلة 1: Database Fundamentals & Design",
+                desc: "نقطة البداية. فهم هيكلة البيانات وكيفية تخزينها وربطها بشكل منطقي يحاكي أنظمة الشركات الحقيقية.",
+                courses: [{
+                    id: "c1", titleEN: "Database Fundamentals & Database Design", titleAR: "أساسيات وتصميم قواعد البيانات من الصفر",
+                    desc: "كورس شامل يغطي المفاهيم الأساسية، تصميم الجداول، العلاقات (Relations)، المفاتيح (Keys)، الـ ERD، والـ Normalization.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=كورس+تصميم+قواعد+البيانات+من+الصفر+شامل",
+                    instructor: "", customLink: "", docs: "https://www.lucidchart.com/pages/database-diagram/database-design",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "تصميم قاعدة بيانات لشركة توزيع", goal: "تطبيق مفاهيم التصميم (ERD) عملياً قبل كتابة أي كود.", steps: [
+                    { text: "تحديد الكيانات: العملاء، المنتجات، الموردين، المخازن، المبيعات، الفواتير.", done: false },
+                    { text: "تحديد الحقول لكل كيان (Attributes).", done: false },
+                    { text: "تحديد العلاقات (1:N, N:M) والمفاتيح (Primary/Foreign).", done: false },
+                    { text: "رسم ERD باستخدام draw.io.", done: false },
+                    { text: "تطبيق Normalization حتى 3NF.", done: false }
+                ]}
+            },
+            {
+                id: "stage-2", title: "المرحلة 2: SQL Engineering (PostgreSQL)",
+                desc: "تحويل التصميم النظري إلى قاعدة بيانات حقيقية والتعامل معها برمجياً.",
+                courses: [{
+                    id: "c2", titleEN: "Complete SQL Course Using PostgreSQL", titleAR: "كورس SQL الشامل من الصفر باستخدام PostgreSQL",
+                    desc: "كتابة الاستعلامات، إنشاء الجداول، إدارة القيود، الـ Joins، والوظائف المتقدمة لاستخراج التقارير.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=كورس+PostgreSQL+بالعربي+كامل",
+                    instructor: "", customLink: "", docs: "https://www.postgresql.org/docs/",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "تنفيذ قاعدة بيانات شركة التوزيع عملياً", goal: "تحويل الـ ERD من المرحلة 1 إلى قاعدة بيانات PostgreSQL.", steps: [
+                    { text: "تثبيت PostgreSQL و pgAdmin.", done: false },
+                    { text: "كتابة سكربت إنشاء الجداول (CREATE TABLE) مع القيود.", done: false },
+                    { text: "إدخال بيانات وهمية (INSERT).", done: false },
+                    { text: "كتابة 5 استعلامات لاستخراج تقارير (أكثر المنتجات مبيعاً، حسابات الموردين).", done: false }
+                ]}
+            },
+            {
+                id: "stage-3", title: "المرحلة 3: Python Programming",
+                desc: "تعلم لغة البرمجة التي ستستخدمها كمهندس أنظمة لأتمتة المهام والربط بين الخدمات.",
+                courses: [{
+                    id: "c3", titleEN: "Python Complete Course", titleAR: "كورس بايثون الشامل من الصفر",
+                    desc: "الأساسيات، الدوال، الملفات، OOP، معالجة الأخطاء، والاتصال بقواعد البيانات.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=كورس+بايثون+كامل",
+                    instructor: "", customLink: "", docs: "https://docs.python.org/3/",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "برنامج إدارة المخزون النصي (CLI) مع بايثون", goal: "ربط البرمجة بقاعدة البيانات.", steps: [
+                    { text: "إنشاء سكربت Python يتصل بـ PostgreSQL باستخدام psycopg2.", done: false },
+                    { text: "برمجة دوال للإضافة والتعديل على المنتجات والعملاء.", done: false },
+                    { text: "عمل واجهة نصية (Terminal) تطلب من المستخدم إدخال البيانات.", done: false }
+                ]}
+            },
+            {
+                id: "stage-4", title: "المرحلة 4: Networking Engineering",
+                desc: "العمود الفقري للبنية التحتية. كيف تتصل الأجهزة وتتبادل البيانات.",
+                courses: [
+                    { id: "c4_1", titleEN: "Computer Networking Fundamentals", titleAR: "أساسيات شبكات الحاسب (Network+ level)", desc: "فهم بروتوكولات TCP/IP، OSI Model، IP Addressing، Subnetting.", youtubeSearch: "https://www.youtube.com/results?search_query=كورس+أساسيات+الشبكات+Network%2B", instructor: "", customLink: "", docs: "", completed: false, startDate: "", endDate: "", notes: "" },
+                    { id: "c4_2", titleEN: "Cisco CCNA 200-301", titleAR: "كورس شبكات سيسكو CCNA الشامل", desc: "التطبيق العملي للشبكات في الشركات، VLANs، Routing، وحل المشاكل.", youtubeSearch: "https://www.youtube.com/results?search_query=كورس+CCNA+200-301+كامل", instructor: "", customLink: "", docs: "https://learningnetwork.cisco.com/", completed: false, startDate: "", endDate: "", notes: "" },
+                    { id: "c4_3", titleEN: "MikroTik MTCNA & MTCRE", titleAR: "شهادات ميكروتيك الأساسية والتوجيه", desc: "التعامل مع RouterOS، إدارة الباندويث، الـ Firewall، والتوجيه المتقدم.", youtubeSearch: "https://www.youtube.com/results?search_query=كورس+MTCNA+ميكروتيك+بالعربي", instructor: "", customLink: "", docs: "https://wiki.mikrotik.com/wiki/Main_Page", completed: false, startDate: "", endDate: "", notes: "" }
+                ],
+                project: { title: "تصميم شبكة شركة متعددة الفروع", goal: "بناء شبكة متكامل تحاكي الواقع باستخدام أدوات المحاكاة.", steps: [
+                    { text: "استخدام Cisco Packet Tracer لتصميم شبكة فرع رئيسي.", done: false },
+                    { text: "إعداد VLANs لفصل أقسام الشركة (HR, IT, Sales).", done: false },
+                    { text: "إعداد DHCP لتوزيع الـ IPs، و Routing لربط الشبكات.", done: false },
+                    { text: "تكوين MikroTik (على GNS3 أو جهاز حقيقي) لتوزيع الإنترنت وتطبيق Firewall Rules.", done: false }
+                ]}
+            },
+            {
+                id: "stage-5", title: "المرحلة 5: Linux System Administration",
+                desc: "نظام التشغيل الأساسي لمعظم خوادم وأنظمة العالم.",
+                courses: [{
+                    id: "c5", titleEN: "Linux System Administration Complete Course", titleAR: "إدارة أنظمة لينكس الشامل",
+                    desc: "استخدام سطر الأوامر (Terminal)، إدارة المستخدمين، الصلاحيات، الحزم، الخدمات.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=كورس+Linux+System+Administration+بالعربي",
+                    instructor: "", customLink: "", docs: "https://ubuntu.com/server/docs",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "إعداد خادم Ubuntu Server", goal: "الاعتماد على واجهة الأوامر فقط لإدارة الخادم.", steps: [
+                    { text: "تثبيت Ubuntu Server على جهاز وهمي.", done: false },
+                    { text: "إنشاء 3 مستخدمين وإعطاء صلاحيات Sudo لأحدهم.", done: false },
+                    { text: "تأمين الاتصال عبر SSH باستخدام المفاتيح بدلاً من الباسورد.", done: false },
+                    { text: "تثبيت خدمة Nginx وتشغيل صفحة ويب بسيطة.", done: false }
+                ]}
+            },
+            {
+                id: "stage-6", title: "المرحلة 6: Windows Server & Active Directory",
+                desc: "إدارة أجهزة الشركة والسياسات الخاصة بموظفي المؤسسة.",
+                courses: [{
+                    id: "c6", titleEN: "Windows Server & Active Directory Complete Course", titleAR: "إدارة خوادم ويندوز و Active Directory",
+                    desc: "تثبيت الخادم، إعداد الدومين، إدارة المستخدمين، Group Policy، و DNS/DHCP.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=كورس+Windows+Server+Active+Directory+بالعربي",
+                    instructor: "", customLink: "", docs: "https://learn.microsoft.com/en-us/windows-server/",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "إنشاء بيئة Domain تجريبية", goal: "التحكم المركزي في أجهزة وصلاحيات الموظفين.", steps: [
+                    { text: "تثبيت Windows Server و ترقيته كـ Domain Controller.", done: false },
+                    { text: "إنشاء وحدات تنظيمية (OUs) لمختلف الأقسام.", done: false },
+                    { text: "تطبيق Group Policy لمنع الوصول للوحة التحكم للمستخدمين العاديين.", done: false },
+                    { text: "ضم جهاز Windows 11 إلى الدومين وتسجيل الدخول بمستخدم جديد.", done: false }
+                ]}
+            },
+            {
+                id: "stage-7", title: "المرحلة 7: Virtualization & Server Infrastructure",
+                desc: "الاستفادة القصوى من موارد الأجهزة المادية عبر إنشاء خوادم افتراضية متعددة.",
+                courses: [{
+                    id: "c7", titleEN: "Proxmox VE Complete Course", titleAR: "كورس إدارة البيئة الافتراضية باستخدام Proxmox",
+                    desc: "الكورس يغطي إنشاء الـ VMs، التخزين، الشبكات الافتراضية، والنسخ الاحتياطي.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=Proxmox+VE+tutorial+بالعربي",
+                    instructor: "", customLink: "", docs: "https://pve.proxmox.com/wiki/Main_Page",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "بناء Virtualization Home Lab", goal: "محاكاة مركز بيانات (Data Center) مصغر.", steps: [
+                    { text: "تثبيت نظام Proxmox على جهاز/محاكي.", done: false },
+                    { text: "إنشاء خادم Linux وخادم Windows Server من داخل المنصة.", done: false },
+                    { text: "إعداد شبكة افتراضية داخلية تربط الخوادم ببعضها.", done: false },
+                    { text: "أخذ Snapshot وتجربة استعادة النظام بعد إحداث عطل متعمد.", done: false }
+                ]}
+            },
+            {
+                id: "stage-8", title: "المرحلة 8: APIs & System Integration",
+                desc: "كيف تجعل الأنظمة المنفصلة (قواعد بيانات، برامج، أجهزة) تتحدث مع بعضها.",
+                courses: [{
+                    id: "c8", titleEN: "REST APIs with Python & FastAPI", titleAR: "بناء واجهات برمجية API باستخدام بايثون و FastAPI",
+                    desc: "فهم HTTP, JSON, REST، وبناء API سريعة للربط مع قواعد البيانات واستخدامها في الأتمتة.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=FastAPI+Python+course+in+Arabic",
+                    instructor: "", customLink: "", docs: "https://fastapi.tiangolo.com/",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "بناء API للوصول لبيانات الشركة", goal: "تحويل بيانات قاعدة PostgreSQL إلى JSON.", steps: [
+                    { text: "إنشاء تطبيق FastAPI بسيط.", done: false },
+                    { text: "ربط التطبيق بقاعدة PostgreSQL للمبيعات.", done: false },
+                    { text: "إنشاء Endpoints مثل (GET /customers) لعرض العملاء.", done: false },
+                    { text: "تجربة الـ API باستخدام Postman أو المتصفح.", done: false }
+                ]}
+            },
+            {
+                id: "stage-9", title: "المرحلة 9: Cloud Computing",
+                desc: "نقل البنية التحتية من أجهزة محلية إلى السحابة.",
+                courses: [
+                    { id: "c9_1", titleEN: "Microsoft Azure Fundamentals (AZ-900)", titleAR: "أساسيات الحوسبة السحابية أزور", desc: "مفاهيم السحابة الأساسية، الأمان، والأسعار.", youtubeSearch: "https://www.youtube.com/results?search_query=AZ-900+شرح+بالعربي", instructor: "", customLink: "", docs: "https://learn.microsoft.com/en-us/certifications/exams/az-900", completed: false, startDate: "", endDate: "", notes: "" },
+                    { id: "c9_2", titleEN: "Microsoft Azure Administrator (AZ-104)", titleAR: "مدير أنظمة أزور", desc: "إدارة الهويات، التخزين، الخوادم السحابية، والشبكات الافتراضية عملياً.", youtubeSearch: "https://www.youtube.com/results?search_query=AZ-104+شرح+بالعربي", instructor: "", customLink: "", docs: "https://learn.microsoft.com/en-us/certifications/exams/az-104", completed: false, startDate: "", endDate: "", notes: "" }
+                ],
+                project: { title: "تأسيس بيئة سحابية لفرع شركة", goal: "نقل البنية التحتية التقليدية للسحابة.", steps: [
+                    { text: "إنشاء Virtual Network (VNet) على Azure.", done: false },
+                    { text: "إطلاق Virtual Machine (Linux/Windows) داخل الـ VNet.", done: false },
+                    { text: "إعداد Network Security Group (NSG) لفتح بورتات 22 و 80 فقط.", done: false },
+                    { text: "استخدام Azure Pricing Calculator لحساب التكلفة الشهرية للمشروع.", done: false }
+                ]}
+            },
+            {
+                id: "stage-10", title: "المرحلة 10: DevOps & Infrastructure Automation",
+                desc: "أتمتة التشغيل والنشر لتقليل التدخل البشري وتسريع العمليات.",
+                courses: [{
+                    id: "c10", titleEN: "Docker & CI/CD Fundamentals", titleAR: "أساسيات دوكر والـ CI/CD",
+                    desc: "تغليف التطبيقات باستخدام Docker وتشغيلها في أي بيئة، وأتمتة النشر عبر GitHub Actions.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=كورس+Docker+بالعربي+كامل",
+                    instructor: "", customLink: "", docs: "https://docs.docker.com/",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "Containerized Micro-Environment", goal: "تشغيل التطبيقات بمعزل عن نظام التشغيل المضيف.", steps: [
+                    { text: "كتابة Dockerfile للـ API التي بنيتها بـ Python.", done: false },
+                    { text: "كتابة ملف docker-compose.yml لتشغيل الـ API مع قاعدة بيانات PostgreSQL معاً بضغطة واحدة.", done: false },
+                    { text: "رفع الكود على GitHub.", done: false }
+                ]}
+            },
+            {
+                id: "stage-11", title: "المرحلة 11: Cybersecurity",
+                desc: "تأمين الأنظمة والشبكات التي قمت ببنائها ضد الاختراقات.",
+                courses: [{
+                    id: "c11", titleEN: "Cybersecurity Fundamentals & Network Security", titleAR: "أساسيات الأمن السيبراني وتأمين الشبكات",
+                    desc: "مفاهيم التشفير، الجدران النارية، VPN، تأمين الخوادم.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=Security%2B+شرح+بالعربي",
+                    instructor: "", customLink: "", docs: "https://www.comptia.org/certifications/security",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "خطة التأمين الشاملة (Security Policy)", goal: "وضع القواعد الفنية لحماية الشركة.", steps: [
+                    { text: "إعداد VPN آمن للموظفين عن بُعد.", done: false },
+                    { text: "تكوين سياسة النسخ الاحتياطي (Backup Strategy 3-2-1).", done: false },
+                    { text: "تفعيل Firewall لمنع الوصول الخارجي غير المصرح به.", done: false },
+                    { text: "كتابة مستند يوضح سياسات الأمان.", done: false }
+                ]}
+            },
+            {
+                id: "stage-12", title: "المرحلة 12: Business Analysis & Systems Architecture",
+                desc: "فهم لغة العميل وتحويل مشاكله الإدارية إلى حل تقني كامل.",
+                courses: [{
+                    id: "c12", titleEN: "Systems Analysis and Design", titleAR: "تحليل وتصميم النظم والبنية التحتية",
+                    desc: "جمع المتطلبات، تحليل أعمال الشركة، رسم مخططات الهيكلة.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=Systems+Analysis+and+Design+بالعربي",
+                    instructor: "", customLink: "", docs: "https://www.drawio.com/",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "تحليل وتصميم نظام شركة افتراضية", goal: "التفكير كمهندس أنظمة حقيقي.", steps: [
+                    { text: "كتابة وثيقة متطلبات العميل (شركة شحن مثلاً).", done: false },
+                    { text: "رسم مخطط البنية التحتية (Architecture Diagram).", done: false },
+                    { text: "تحديد قائمة العتاد والبرمجيات المطلوبة وتكلفتها.", done: false }
+                ]}
+            },
+            {
+                id: "stage-13", title: "المرحلة 13: ERP, CRM & Enterprise Systems",
+                desc: "إدارة أنظمة موارد المؤسسة التي تعتمد عليها الشركات.",
+                courses: [{
+                    id: "c13", titleEN: "ERP Fundamentals & Odoo Functional", titleAR: "أساسيات الـ ERP واستخدام نظام Odoo",
+                    desc: "فهم الدورة المستندية للشركات، وإعداد نظام Odoo لإدارة المبيعات والمشتريات.",
+                    youtubeSearch: "https://www.youtube.com/results?search_query=Odoo+Functional+course+Arabic+شرح",
+                    instructor: "", customLink: "", docs: "https://www.odoo.com/documentation",
+                    completed: false, startDate: "", endDate: "", notes: ""
+                }],
+                project: { title: "تطبيق وتجهيز Odoo لشركة تجارية", goal: "تشغيل نظام إداري متكامل.", steps: [
+                    { text: "تثبيت Odoo وتطبيقات (المبيعات، المشتريات، المخازن).", done: false },
+                    { text: "إدخال بيانات 10 منتجات وتصنيفاتها.", done: false },
+                    { text: "إنشاء مستخدمين بصلاحيات مختلفة وإجراء بيع لتحديث المخزون.", done: false }
+                ]}
+            },
+            {
+                id: "stage-14", title: "المرحلة 14: Portfolio & Final Project",
+                desc: "مشروع متكامل يحاكي بيئة عمل حقيقية لشركة شحن، هتنفذه من الألف للياء كإثبات خبرة عملي قوي جداً للـ CV.",
+                courses: [],
+                project: { title: "بناء البنية التحتية لشركة 'سند' اللوجستية", goal: "تصميم وتنفيذ نظام تكنولوجي لشركة لها فرعين رئيسيين.", steps: [
+                    { text: "التحليل: تحديد الأجهزة المطلوبة، والـ Subnetting للفرعين.", done: false },
+                    { text: "الشبكات: إعداد Site-to-Site VPN بين 2 راوتر MikroTik للربط الآمن.", done: false },
+                    { text: "الخوادم: تسطيب Proxmox وإنشاء 2 Virtual Machines.", done: false },
+                    { text: "الـ Active Directory: إعداد ويندوز سيرفر وإضافة 50 مستخدم بصلاحيات.", done: false },
+                    { text: "التطبيقات: تسطيب Odoo ERP على خادم Linux مع PostgreSQL.", done: false },
+                    { text: "السحابة: إنشاء خادم على Azure لاستضافة موقع تتبع الشحنات.", done: false },
+                    { text: "الأمان: عمل Firewall Rules وسكربت Backup يومي.", done: false }
+                ]}
+            }
+        ];
+
+        // Store Keys
+        const RM_STORAGE_KEY = 'sysEngRoadmap_Premium_v6';
+        const TASKS_STORAGE_KEY = 'sysEngTasks_Premium_v3';
+        
+        let appData = JSON.parse(localStorage.getItem(RM_STORAGE_KEY)) || defaultRoadmap;
+        let tasksData = JSON.parse(localStorage.getItem(TASKS_STORAGE_KEY)) || [];
+
+        // ================= TAB SWITCHING =================
+        function switchTab(tab) {
+            document.getElementById('tab-roadmap').classList.remove('active');
+            document.getElementById('tab-tasks').classList.remove('active');
+            
+            document.getElementById('view-roadmap').classList.add('hidden');
+            document.getElementById('view-tasks').classList.add('hidden');
+
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('view-' + tab).classList.remove('hidden');
+        }
+
+        // ================= ROADMAP LOGIC =================
+        function renderRoadmap() {
+            const container = document.getElementById('roadmap-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            appData.forEach((stage, stageIndex) => {
+                let totalItems = stage.courses.length + stage.project.steps.length;
+                let completedItems = stage.courses.filter(c => c.completed).length + stage.project.steps.filter(s => s.done).length;
+                let progress = totalItems === 0 ? 0 : Math.round((completedItems / totalItems) * 100);
+                let delay = 0.1 * (stageIndex + 1);
+
+                // Courses HTML
+                let coursesHTML = stage.courses.map((course, courseIndex) => `
+                    <div class="relative bg-slate-900/60 border border-slate-700/50 rounded-xl p-5 mb-5 hover:border-blue-500/30 transition-all duration-300 search-item group">
+                        
+                        <div class="absolute right-0 top-0 bottom-0 w-1 rounded-r-xl transition-all duration-300 ${course.completed ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-blue-600 group-hover:bg-blue-400'}"></div>
+                        
+                        <div class="flex flex-col lg:flex-row justify-between gap-6 pl-2 pr-4">
+                            <div class="flex-1 w-full">
+                                <label class="flex items-start gap-4 cursor-pointer custom-checkbox mb-3">
+                                    <div class="relative w-6 h-6 mt-1 flex-shrink-0">
+                                        <input type="checkbox" class="opacity-0 absolute w-full h-full cursor-pointer z-10" 
+                                            ${course.completed ? 'checked' : ''} 
+                                            onchange="toggleCourse(${stageIndex}, ${courseIndex}, this.checked)">
+                                        <div class="w-6 h-6 border-2 border-slate-500 rounded flex items-center justify-center transition-all duration-300 bg-slate-800">
+                                            <svg class="w-4 h-4 text-white check-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="w-full pr-2">
+                                        <h3 class="text-xl font-bold transition-all duration-300 ${course.completed ? 'text-gray-500 line-through' : 'text-white'}">${course.titleEN}</h3>
+                                        <h4 class="text-lg font-semibold ${course.completed ? 'text-gray-600' : 'text-blue-300'} mb-2">${course.titleAR}</h4>
+                                    </div>
+                                </label>
+                                
+                                <p class="text-gray-400 text-sm leading-relaxed mb-4 pr-12">${course.desc}</p>
+                                
+                                <div class="flex flex-col gap-3 pr-12 w-full max-w-2xl">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div class="bg-slate-800/80 border border-slate-700 text-gray-300 px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors hover:border-amber-500/50 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500">
+                                            <i class="fa-solid fa-user-tie text-amber-500 w-4 text-center"></i>
+                                            <input type="text" value="${course.instructor}" class="bg-transparent border-none outline-none text-white w-full placeholder-gray-500" placeholder="اكتب اسم المدرب هنا..." onchange="updateData(${stageIndex}, ${courseIndex}, 'instructor', this.value)">
+                                        </div>
+                                        <div class="bg-slate-800/80 border border-slate-700 text-gray-300 px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors hover:border-blue-500/50 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+                                            <i class="fa-solid fa-link text-blue-400 w-4 text-center"></i>
+                                            <input type="url" value="${course.customLink || ''}" class="bg-transparent border-none outline-none text-white w-full placeholder-gray-500" placeholder="رابط الكورس هنا..." onchange="updateData(${stageIndex}, ${courseIndex}, 'customLink', this.value)">
+                                            ${course.customLink ? `<a href="${course.customLink}" target="_blank" class="text-blue-400 hover:text-blue-300"><i class="fa-solid fa-external-link-alt"></i></a>` : ''}
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-wrap gap-2 mt-1">
+                                        <a href="${course.youtubeSearch}" target="_blank" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 hover:shadow-[0_0_10px_rgba(239,68,68,0.2)]">
+                                            <i class="fa-brands fa-youtube text-sm"></i> ابحث عن شروحات
+                                        </a>
+                                        ${course.docs ? `
+                                        <a href="${course.docs}" target="_blank" class="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
+                                            <i class="fa-solid fa-book"></i> مرجع رسمي
+                                        </a>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="w-full lg:w-64 bg-slate-950/50 p-4 rounded-xl border border-slate-800 flex-shrink-0 mt-4 lg:mt-0">
+                                <div class="grid grid-cols-2 gap-3 mb-3">
+                                    <div>
+                                        <label class="text-xs text-gray-500 mb-1 block">البداية</label>
+                                        <input type="date" value="${course.startDate}" class="w-full bg-slate-800 text-gray-300 border border-slate-700 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500 transition-colors" onchange="updateData(${stageIndex}, ${courseIndex}, 'startDate', this.value)">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-gray-500 mb-1 block">النهاية</label>
+                                        <input type="date" value="${course.endDate}" class="w-full bg-slate-800 text-gray-300 border border-slate-700 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500 transition-colors" onchange="updateData(${stageIndex}, ${courseIndex}, 'endDate', this.value)">
+                                    </div>
+                                </div>
+                                <textarea placeholder="ملاحظاتك الشخصية..." class="w-full bg-slate-800 text-gray-300 border border-slate-700 rounded-lg p-2 text-xs focus:outline-none focus:border-blue-500 resize-none transition-colors h-16" onchange="updateData(${stageIndex}, ${courseIndex}, 'notes', this.value)">${course.notes}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Project HTML
+                let stepsHTML = stage.project.steps.map((step, stepIndex) => `
+                    <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-slate-800/50 rounded-lg transition-colors group custom-checkbox">
+                        <div class="relative w-5 h-5 flex-shrink-0 mt-0.5">
+                            <input type="checkbox" class="opacity-0 absolute w-full h-full cursor-pointer z-10" 
+                                ${step.done ? 'checked' : ''} 
+                                onchange="toggleStep(${stageIndex}, ${stepIndex}, this.checked)">
+                            <div class="w-5 h-5 border-2 border-slate-600 rounded flex items-center justify-center transition-all bg-slate-800 group-hover:border-amber-500/50">
+                                <svg class="w-3.5 h-3.5 text-white check-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <span class="text-sm transition-all duration-300 ${step.done ? 'text-gray-500 line-through' : 'text-gray-300 group-hover:text-white'}">${step.text}</span>
+                    </label>
+                `).join('');
+
+                let projectHTML = `
+                    <div class="mt-8 bg-gradient-to-r from-slate-900 to-slate-900/50 border border-amber-900/30 rounded-xl p-6 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="flex items-center gap-3 mb-4 relative z-10">
+                            <div class="bg-amber-500/20 p-2.5 rounded-lg text-amber-400"><i class="fa-solid fa-laptop-code text-xl"></i></div>
+                            <h4 class="text-xl font-bold text-white">${stage.project.title}</h4>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-6 bg-slate-950/50 p-3 rounded-lg border-r-2 border-amber-500 leading-relaxed relative z-10">${stage.project.goal}</p>
+                        <h5 class="text-sm font-bold text-gray-300 mb-3 px-2 relative z-10">خطوات التنفيذ والتقييم:</h5>
+                        <div class="space-y-1 bg-slate-950/30 p-3 rounded-xl border border-slate-800/50 relative z-10">
+                            ${stepsHTML}
+                        </div>
+                    </div>
+                `;
+
+                // Stage Wrapper
+                let isOpenClass = stageIndex === 0 ? 'open' : '';
+                
+                const stageHTML = `
+                    <div class="glass-panel rounded-2xl overflow-hidden stage-container animate-fade-up" style="animation-delay: ${delay}s" id="${stage.id}">
+                        <div class="p-5 md:p-6 cursor-pointer flex flex-col md:flex-row justify-between items-center gap-4 hover:bg-slate-800/30 transition-colors" onclick="toggleAccordion('${stage.id}')">
+                            <div class="flex-1 flex items-start gap-4 w-full">
+                                <div class="bg-blue-900/30 border border-blue-500/30 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-400 font-bold text-lg">
+                                    ${stageIndex + 1}
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-white stage-title mb-1">${stage.title}</h2>
+                                    <p class="text-gray-400 text-sm">${stage.desc}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="w-full md:w-56 flex items-center gap-4">
+                                <div class="flex-1">
+                                    <div class="flex justify-between text-xs mb-1.5">
+                                        <span class="text-gray-400">الإنجاز</span>
+                                        <span class="text-blue-400 font-bold">${progress}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700">
+                                        <div class="h-full rounded-full progress-bar-fill" style="width: ${progress}%"></div>
+                                    </div>
+                                </div>
+                                <div class="text-gray-500 arrow-icon bg-slate-800 p-2 rounded-lg">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="content-${stage.id}" class="stage-content ${isOpenClass}">
+                            <div class="px-5 md:px-8 pb-8 pt-2">
+                                <hr class="border-slate-800 mb-6">
+                                ${stage.courses.length > 0 ? `<h3 class="text-lg font-bold text-gray-300 mb-5 flex items-center gap-2"><i class="fa-solid fa-book-open text-blue-400"></i> المصادر التعليمية المطلوبة</h3>` : ''}
+                                ${coursesHTML}
+                                ${projectHTML}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += stageHTML;
+            });
+
+            updateStats();
+        }
+
+        // ================= TASKS LOGIC =================
+        function renderTasks() {
+            const listContainer = document.getElementById('tasks-list');
+            if(!listContainer) return;
+            listContainer.innerHTML = '';
+            
+            const noTasksMsg = document.getElementById('no-tasks-msg');
+            
+            if(tasksData.length === 0) {
+                if(noTasksMsg) noTasksMsg.classList.remove('hidden');
+            } else {
+                if(noTasksMsg) noTasksMsg.classList.add('hidden');
+                
+                tasksData.forEach((task, index) => {
+                    listContainer.innerHTML += `
+                        <div id="task-item-${index}" class="bg-slate-800/80 border ${task.completed ? 'border-emerald-500/30' : 'border-slate-700'} rounded-xl p-4 flex items-center justify-between gap-4 transition-all hover:bg-slate-800 group">
+                            <label class="flex items-center gap-4 cursor-pointer custom-checkbox flex-1">
+                                <div class="relative w-6 h-6 flex-shrink-0">
+                                    <input type="checkbox" class="opacity-0 absolute w-full h-full cursor-pointer z-10" 
+                                        ${task.completed ? 'checked' : ''} 
+                                        onchange="toggleTaskCompletion(${index}, this.checked)">
+                                    <div class="w-6 h-6 border-2 border-slate-500 rounded flex items-center justify-center transition-all duration-300 bg-slate-900 group-hover:border-blue-500">
+                                        <svg class="w-4 h-4 text-white check-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="text-lg transition-all duration-300 ${task.completed ? 'text-gray-500 line-through' : 'text-white'}">${task.title}</span>
+                            </label>
+                            
+                            <button onclick="deleteTask(${index})" class="text-gray-500 hover:text-red-500 bg-slate-900/50 hover:bg-red-500/10 w-10 h-10 rounded-lg flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+            
+            updateTaskStats();
+        }
+
+        function addNewTask() {
+            const input = document.getElementById('new-task-title');
+            if(!input) return;
+            const title = input.value.trim();
+            
+            if(title !== "") {
+                tasksData.push({ title: title, completed: false });
+                input.value = "";
+                saveTasks();
+            } else {
+                alert("برجاء كتابة عنوان المهمة أولاً!");
+            }
+        }
+
+        // Setup Enter key listener properly
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskInputEl = document.getElementById('new-task-title');
+            if(taskInputEl) {
+                taskInputEl.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addNewTask();
+                    }
+                });
+            }
+        });
+
+        function toggleTaskCompletion(index, status) {
+            tasksData[index].completed = status;
+            saveTasks();
+
+            if(status) {
+                triggerCelebration();
+                const taskCard = document.getElementById(`task-item-${index}`);
+                if(taskCard) {
+                    taskCard.classList.add('task-pop');
+                    setTimeout(() => taskCard.classList.remove('task-pop'), 400);
+                }
+            }
+        }
+
+        function triggerCelebration() {
+            confetti({
+                particleCount: 60,
+                spread: 70,
+                origin: { y: 0.8 },
+                colors: ['#3b82f6', '#10b981', '#d4af37', '#8b5cf6']
+            });
+        }
+
+        function deleteTask(index) {
+            if(confirm("هل أنت متأكد من حذف هذه المهمة؟")) {
+                tasksData.splice(index, 1);
+                saveTasks();
+            }
+        }
+
+        function saveTasks() {
+            localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasksData));
+            renderTasks();
+        }
+
+        function updateTaskStats() {
+            const total = tasksData.length;
+            const completed = tasksData.filter(t => t.completed).length;
+            const totalCountEl = document.getElementById('tasks-total-count');
+            const completedCountEl = document.getElementById('tasks-completed-count');
+            if(totalCountEl) totalCountEl.innerText = total;
+            if(completedCountEl) completedCountEl.innerText = completed;
+        }
+
+
+        // ================= SHARED LOGIC =================
+        function toggleAccordion(id) {
+            document.getElementById(`content-${id}`).classList.toggle('open');
+        }
+
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('active');
+        }
+
+        function toggleCourse(sIdx, cIdx, status) {
+            appData[sIdx].courses[cIdx].completed = status;
+            saveAndRenderRoadmap();
+            if(status) triggerCelebration();
+        }
+
+        function toggleStep(sIdx, stpIdx, status) {
+            appData[sIdx].project.steps[stpIdx].done = status;
+            saveAndRenderRoadmap();
+            if(status) triggerCelebration();
+        }
+
+        function updateData(sIdx, cIdx, field, val) {
+            appData[sIdx].courses[cIdx][field] = val;
+            localStorage.setItem(RM_STORAGE_KEY, JSON.stringify(appData));
+            if(field === 'customLink') renderRoadmap();
+        }
+
+        function saveAndRenderRoadmap() {
+            localStorage.setItem(RM_STORAGE_KEY, JSON.stringify(appData));
+            renderRoadmap();
+        }
+
+        function updateStats() {
+            let tCourses = 0, cCourses = 0, tSteps = 0, cSteps = 0, cStages = 0;
+            appData.forEach(stage => {
+                let sComplete = true;
+                stage.courses.forEach(c => { tCourses++; if (c.completed) cCourses++; else sComplete = false; });
+                stage.project.steps.forEach(s => { tSteps++; if (s.done) cSteps++; else sComplete = false; });
+                if (sComplete && (stage.courses.length > 0 || stage.project.steps.length > 0)) cStages++;
+            });
+            const percent = (tCourses + tSteps) === 0 ? 0 : Math.round(((cCourses + cSteps) / (tCourses + tSteps)) * 100);
+
+            document.getElementById('total-progress').innerText = `${percent}%`;
+            document.getElementById('completed-stages').innerText = cStages;
+            document.getElementById('completed-courses').innerText = cCourses;
+            document.getElementById('total-courses').innerText = tCourses;
+            document.getElementById('completed-projects').innerText = cSteps; 
+            document.getElementById('total-projects').innerText = tSteps;
+        }
+
+        function exportJSON() {
+            const combinedData = {
+                type: "SysEngBackup_v1",
+                roadmap: appData,
+                tasks: tasksData
+            };
+            const dataStr = JSON.stringify(combinedData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = "SystemsEngineer_Full_Backup.json"; a.click(); URL.revokeObjectURL(url);
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader(); // Fixed typo here!
+            reader.onload = e => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported && imported.type === "SysEngBackup_v1") {
+                        appData = imported.roadmap || defaultRoadmap;
+                        tasksData = imported.tasks || [];
+                    } else if (Array.isArray(imported)) { 
+                        appData = imported;
+                    } else {
+                        throw new Error("Invalid format");
+                    }
+                    saveAndRenderRoadmap();
+                    saveTasks();
+                    alert("تم الاستيراد بنجاح!");
+                } catch (err) { alert("ملف غير صالح."); }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetData() {
+            if(confirm("هل أنت متأكد من إعادة ضبط كل شيء (الخريطة والمهام)؟ لا يمكن التراجع عن ذلك!")) {
+                appData = JSON.parse(JSON.stringify(defaultRoadmap));
+                tasksData = [];
+                saveAndRenderRoadmap();
+                saveTasks();
+            }
+        }
+
+        function filterRoadmap() {
+            document.getElementById('tab-roadmap').click();
+            
+            const query = document.getElementById('search-input').value.toLowerCase();
+            document.querySelectorAll('.stage-container').forEach(stage => {
+                let match = stage.querySelector('.stage-title').innerText.toLowerCase().includes(query);
+                let hasCourse = false;
+                stage.querySelectorAll('.search-item').forEach(course => {
+                    if (course.innerText.toLowerCase().includes(query)) { course.style.display = 'block'; hasCourse = true; } 
+                    else { course.style.display = 'none'; }
+                });
+                if (match || hasCourse || query === '') {
+                    stage.style.display = 'block';
+                    if (query !== '') stage.querySelector('.stage-content').classList.add('open');
+                } else { stage.style.display = 'none'; }
+            });
+        }
+
+        // Initialize both views when window loads
+        window.onload = function() {
+            renderRoadmap();
+            renderTasks();
+            
+            // Re-bind enter key to ensure input works
+            const input = document.getElementById('new-task-title');
+            if(input) {
+                input.addEventListener('keydown', function(e) {
+                    if(e.key === 'Enter') {
+                        e.preventDefault();
+                        addNewTask();
+                    }
+                });
+            }
+        };
+    </script>
+</body>
+</html>
